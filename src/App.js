@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mail, Plus, Trash2, Upload, X, Play, Pause, Save, Folder, FolderPlus, 
   ChevronRight, Eye, Bold, Italic, Underline, Link as LinkIcon,
@@ -17,7 +17,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 // ==================== TOAST NOTIFICATION ====================
 
 const Toast = ({ toasts, removeToast }) => (
-  <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2">
+  <div className="fixed top-4 right-4 z-100 flex flex-col gap-2">
     {toasts.map(toast => (
       <div
         key={toast.id}
@@ -63,8 +63,8 @@ const EMAIL_TEMPLATES = [
       {
         day: 7,
         title: 'Final Touch',
-        subject: 'Last note — {{companyName}}',
-        content: `<p>Hi {{firstName}},</p><p>I'll keep this short — I don't want to clutter your inbox.</p><p>If saving time on repetitive tasks isn't a priority right now, totally understand. Just reply "not now" and I won't reach out again.</p><p>But if you're curious, I'm happy to share a quick demo.</p><p>Best,<br/>Your Name</p>`,
+        subject: 'Last note â€” {{companyName}}',
+        content: `<p>Hi {{firstName}},</p><p>I'll keep this short â€” I don't want to clutter your inbox.</p><p>If saving time on repetitive tasks isn't a priority right now, totally understand. Just reply "not now" and I won't reach out again.</p><p>But if you're curious, I'm happy to share a quick demo.</p><p>Best,<br/>Your Name</p>`,
       },
     ],
   },
@@ -82,7 +82,7 @@ const EMAIL_TEMPLATES = [
       {
         day: 5,
         title: 'Follow Up',
-        subject: 'Following up — {{companyName}}',
+        subject: 'Following up â€” {{companyName}}',
         content: `<p>Hi {{firstName}},</p><p>I wanted to follow up on my previous message. I'm genuinely excited about the work {{companyName}} is doing and believe my background in [your skills] could be a strong fit.</p><p>Happy to share my portfolio or resume if helpful.</p><p>Thanks,<br/>Your Name</p>`,
       },
     ],
@@ -95,14 +95,14 @@ const EMAIL_TEMPLATES = [
       {
         day: 1,
         title: 'Partnership Intro',
-        subject: 'Partnership opportunity — {{companyName}} x [Your Company]',
+        subject: 'Partnership opportunity â€” {{companyName}} x [Your Company]',
         content: `<p>Hi {{firstName}},</p><p>I lead partnerships at [Your Company] and I think there's a compelling opportunity for {{companyName}} and us to collaborate.</p><p>Our audiences overlap significantly and a joint initiative could drive value for both sides.</p><p>Open to a brief call to explore?</p><p>Best,<br/>Your Name</p>`,
       },
       {
         day: 4,
         title: 'Follow Up',
         subject: 'Re: Partnership opportunity',
-        content: `<p>Hi {{firstName}},</p><p>Following up on my note from earlier this week. I've put together a short one-pager on what a partnership could look like — happy to share it if you're interested.</p><p>Best,<br/>Your Name</p>`,
+        content: `<p>Hi {{firstName}},</p><p>Following up on my note from earlier this week. I've put together a short one-pager on what a partnership could look like â€” happy to share it if you're interested.</p><p>Best,<br/>Your Name</p>`,
       },
     ],
   },
@@ -895,10 +895,10 @@ const ColdEmailWorkflow = () => {
   const getSequencesByFolder = (folderId) => sequences.filter(s => s.folderId === folderId);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
+    <div className="flex h-screen bg-linear-to-br from-gray-900 via-black to-gray-900 text-white">
       <Toast toasts={toasts} removeToast={removeToast} />
 
-      <div className="relative h-full w-72 bg-gradient-to-b from-indigo-900 to-indigo-800 p-6 shadow-2xl text-white">
+      <div className="relative h-full w-72 bg-linear-to-b from-indigo-900 to-indigo-800 p-6 shadow-2xl text-white">
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-white bg-opacity-10 rounded-xl backdrop-blur">
@@ -976,7 +976,7 @@ const ColdEmailWorkflow = () => {
           <div className="max-w-6xl mx-auto p-10">
             <div className="mb-8 flex items-start justify-between">
               <div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                <h2 className="text-4xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
                   Create Email Sequence
                 </h2>
                 <p className="text-gray-400">Design your perfect outreach campaign</p>
@@ -1036,7 +1036,7 @@ const ColdEmailWorkflow = () => {
                 </div>
               </div>
 
-              {/* ── Scheduling ── */}
+              {/* â”€â”€ Scheduling â”€â”€ */}
               <div className="bg-gray-900 bg-opacity-60 border border-gray-700 rounded-2xl p-6 mb-8">
                 <div className="flex items-center gap-2 mb-4">
                   <Clock className="w-5 h-5 text-indigo-400" />
@@ -1085,7 +1085,7 @@ const ColdEmailWorkflow = () => {
                   <div key={index} className="bg-gray-900 bg-opacity-70 border border-gray-700 rounded-2xl p-6 hover:border-indigo-500 transition-all duration-200">
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-4">
-                        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg text-white">
+                        <div className="bg-linear-to-br from-indigo-600 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-lg text-white">
                           {index + 1}
                         </div>
                         <div>
@@ -1206,7 +1206,7 @@ const ColdEmailWorkflow = () => {
                 </button>
                 <button
                   onClick={saveCurrentSequence}
-                  className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl transition shadow-lg font-semibold text-white"
+                  className="flex items-center gap-2 px-8 py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl transition shadow-lg font-semibold text-white"
                 >
                   <Save className="w-5 h-5" />
                   Save Sequence
@@ -1217,7 +1217,7 @@ const ColdEmailWorkflow = () => {
         ) : activeTab === 'recipients' ? (
           <div className="p-10">
             <div className="mb-8">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
+              <h2 className="text-4xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
                 Manage Recipients
               </h2>
               <p className="text-gray-400">Add and manage your email recipients (Stored in MySQL Database)</p>
@@ -1291,7 +1291,7 @@ const ColdEmailWorkflow = () => {
               <button
                 onClick={addRecipient}
                 disabled={loading}
-                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl transition shadow-lg font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl transition shadow-lg font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Adding...' : 'Add Recipient'}
               </button>
@@ -1382,7 +1382,7 @@ const ColdEmailWorkflow = () => {
         ) : activeTab === 'analytics' ? (
           <div className="p-10">
             <div className="mb-8">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
+              <h2 className="text-4xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
                 Analytics
               </h2>
               <p className="text-gray-400">Campaign performance overview</p>
@@ -1406,7 +1406,7 @@ const ColdEmailWorkflow = () => {
               ];
 
               const barData = sequences.slice(0, 8).map(s => ({
-                name: s.name.length > 14 ? s.name.slice(0, 14) + '…' : s.name,
+                name: s.name.length > 14 ? s.name.slice(0, 14) + 'â€¦' : s.name,
                 Delivered: s.stats?.delivered || 0,
                 Scheduled: s.stats?.scheduled || 0,
                 Replies: s.stats?.reply || 0,
@@ -1434,7 +1434,7 @@ const ColdEmailWorkflow = () => {
                 <>
                   <div className="grid grid-cols-3 gap-4 mb-8">
                     {statCards.map(card => (
-                      <div key={card.label} className={`bg-gradient-to-br ${card.color} rounded-2xl p-6 shadow-xl`}>
+                      <div key={card.label} className={`bg-linear-to-br ${card.color} rounded-2xl p-6 shadow-xl`}>
                         <div className="text-3xl font-bold mb-1">{card.value}</div>
                         <div className="text-sm opacity-80">{card.label}</div>
                       </div>
@@ -1502,7 +1502,7 @@ const ColdEmailWorkflow = () => {
         ) : (
           <div className="p-10">
             <div className="mb-8">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
+              <h2 className="text-4xl font-bold bg-linear-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
                 Dashboard
               </h2>
               <p className="text-gray-400">Manage your email campaigns</p>
@@ -1631,7 +1631,7 @@ const ColdEmailWorkflow = () => {
       {showViewModal && viewingSequence && (
         <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-auto shadow-2xl border border-gray-700">
-            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-gradient-to-r from-indigo-900 to-purple-900 text-white">
+            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-linear-to-r from-indigo-900 to-purple-900 text-white">
               <h3 className="text-2xl font-bold">{viewingSequence.name}</h3>
               <button onClick={() => setShowViewModal(false)} className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition">
                 <X className="w-6 h-6" />
@@ -1648,7 +1648,7 @@ const ColdEmailWorkflow = () => {
                   {viewingSequence.steps.map((step, index) => (
                     <div key={index} className="bg-gray-800 rounded-xl p-5 border border-gray-700">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white">
+                        <div className="bg-linear-to-br from-indigo-600 to-purple-600 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white">
                           {index + 1}
                         </div>
                         <div>
@@ -1714,7 +1714,7 @@ const ColdEmailWorkflow = () => {
       {showActivateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-auto shadow-2xl border border-gray-700">
-            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-gradient-to-r from-indigo-900 to-purple-900 text-white">
+            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-linear-to-r from-indigo-900 to-purple-900 text-white">
               <h3 className="text-2xl font-bold">
                 {modalStep === 'emails' ? 'Select Recipients' : 'Review Sequence'}
               </h3>
@@ -1823,7 +1823,7 @@ const ColdEmailWorkflow = () => {
                     className={`w-full py-3 rounded-xl font-semibold transition ${
                       emailList.length === 0 
                         ? 'bg-gray-700 cursor-not-allowed text-gray-400' 
-                        : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
+                        : 'bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
                     }`}
                   >
                     Next: Review Sequence
@@ -1834,7 +1834,7 @@ const ColdEmailWorkflow = () => {
                   {editableSequence.steps.map((step, index) => (
                     <div key={index} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white">
+                        <div className="bg-linear-to-br from-indigo-600 to-purple-600 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white">
                           {index + 1}
                         </div>
                         <div className="text-sm text-gray-400">Day {step.day || '-'} - {step.title}</div>
@@ -1859,7 +1859,7 @@ const ColdEmailWorkflow = () => {
 
                   <button
                     onClick={finalizeActivation}
-                    className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-xl font-semibold transition shadow-lg text-white"
+                    className="w-full py-3 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-xl font-semibold transition shadow-lg text-white"
                   >
                     Activate Sequence
                   </button>
@@ -1870,11 +1870,11 @@ const ColdEmailWorkflow = () => {
         </div>
       )}
 
-      {/* ── Template Modal ── */}
+      {/* â”€â”€ Template Modal â”€â”€ */}
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-auto shadow-2xl border border-gray-700">
-            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-gradient-to-r from-indigo-900 to-purple-900">
+            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-linear-to-r from-indigo-900 to-purple-900">
               <div>
                 <h3 className="text-2xl font-bold text-white">Email Templates</h3>
                 <p className="text-indigo-300 text-sm mt-1">Start with a proven structure</p>
@@ -1894,7 +1894,7 @@ const ColdEmailWorkflow = () => {
                           {template.category}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-400">{template.steps.length} steps · Days {template.steps.map(s => s.day).join(', ')}</p>
+                      <p className="text-sm text-gray-400">{template.steps.length} steps Â· Days {template.steps.map(s => s.day).join(', ')}</p>
                     </div>
                     <button
                       onClick={() => applyTemplate(template)}
@@ -1919,14 +1919,14 @@ const ColdEmailWorkflow = () => {
         </div>
       )}
 
-      {/* ── Email Preview Modal ── */}
+      {/* â”€â”€ Email Preview Modal â”€â”€ */}
       {showPreviewModal && previewStep && (
         <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-auto shadow-2xl border border-gray-700">
-            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-gradient-to-r from-indigo-900 to-purple-900">
+            <div className="p-6 border-b border-gray-700 flex justify-between items-center bg-linear-to-r from-indigo-900 to-purple-900">
               <div>
                 <h3 className="text-xl font-bold text-white">Email Preview</h3>
-                <p className="text-indigo-300 text-sm mt-1">Day {previewStep.day} · {previewStep.title}</p>
+                <p className="text-indigo-300 text-sm mt-1">Day {previewStep.day} Â· {previewStep.title}</p>
               </div>
               <button onClick={() => setShowPreviewModal(false)} className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition text-white">
                 <X className="w-6 h-6" />
