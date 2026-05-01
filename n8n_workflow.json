@@ -1,0 +1,423 @@
+{
+  "name": "AI Personalized Email - Fixed Multiple Recipients",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "activate-sequence",
+        "options": {}
+      },
+      "id": "cd46d3d9-c9b8-4053-9a75-4d4a0079d497",
+      "name": "Activate Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -752,
+        96
+      ],
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "seq-name",
+              "name": "sequenceName",
+              "value": "={{ $json.body.sequenceName }}",
+              "type": "string"
+            },
+            {
+              "id": "email-steps",
+              "name": "emailSteps",
+              "value": "={{ $json.body.emailSteps }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3be51b6f-e1c8-4a9b-bbbe-131e06ce4669",
+      "name": "Extract Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        -576,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "emailSteps",
+        "options": {}
+      },
+      "id": "d755272a-6831-47e5-bd16-2a7ae086653d",
+      "name": "Split Email Steps",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.day }}",
+              "operation": "equal",
+              "value2": 1
+            }
+          ]
+        }
+      },
+      "id": "1f212e6c-4242-4245-936b-2351c0259d59",
+      "name": "Is Day 1?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Personalize subject and content with recipient data\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  let subject = item.json.subject || '';\n  let content = item.json.content || '';\n  \n  const recipientData = item.json.recipientData || {};\n  \n  // Replace placeholders in subject\n  subject = subject\n    .replace(/\\{\\{firstName\\}\\}/gi, recipientData.firstName || 'there')\n    .replace(/\\{\\{lastName\\}\\}/gi, recipientData.lastName || '')\n    .replace(/\\{\\{company\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{companyName\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{domain\\}\\}/gi, recipientData.domain || '')\n    .replace(/\\{\\{designation\\}\\}/gi, recipientData.designation || '')\n    .trim();\n  \n  // Replace placeholders in content\n  content = content\n    .replace(/\\{\\{firstName\\}\\}/gi, recipientData.firstName || 'there')\n    .replace(/\\{\\{lastName\\}\\}/gi, recipientData.lastName || '')\n    .replace(/\\{\\{company\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{companyName\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{domain\\}\\}/gi, recipientData.domain || '')\n    .replace(/\\{\\{designation\\}\\}/gi, recipientData.designation || '');\n  \n  results.push({\n    json: {\n      ...item.json,\n      subject: subject,\n      content: content,\n      recipientData: recipientData\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "3fbdd465-bcbf-4a11-9693-37c0035f3402",
+      "name": "Replace Placeholders (Immediate)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract text from Gemini response\nconst items = $input.all();\nconst results = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const response = items[i].json;\n  const previousData = $('Replace Placeholders (Immediate)').all()[i].json;\n  \n  let personalizedText = '';\n  \n  if (response.content && response.content.parts && response.content.parts.length > 0) {\n    personalizedText = response.content.parts[0].text;\n  } else if (response.text) {\n    personalizedText = response.text;\n  } else if (typeof response === 'string') {\n    personalizedText = response;\n  } else {\n    personalizedText = previousData.content;\n  }\n  \n  personalizedText = personalizedText.trim();\n  \n  results.push({\n    json: {\n      personalizedContent: personalizedText,\n      email: previousData.email,\n      subject: previousData.subject\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "c2f17ab6-58ef-4855-a13a-fea7a2520830",
+      "name": "Extract Content (Immediate)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.personalizedContent }}",
+        "toList": [
+          "={{ $json.email }}"
+        ],
+        "additionalFields": {}
+      },
+      "id": "b37324b0-db7f-47c7-b35b-00ca789b8b34",
+      "name": "Send Day 1 Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        832,
+        0
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_HERE",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.day - 1 }}",
+        "unit": "days"
+      },
+      "id": "5f7c402c-53b9-4c74-a0fe-382a6243463c",
+      "name": "Wait for Scheduled Day",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        192
+      ],
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "jsCode": "// Personalize subject and content with recipient data\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  let subject = item.json.subject || '';\n  let content = item.json.content || '';\n  \n  const recipientData = item.json.recipientData || {};\n  \n  // Replace placeholders in subject\n  subject = subject\n    .replace(/\\{\\{firstName\\}\\}/gi, recipientData.firstName || 'there')\n    .replace(/\\{\\{lastName\\}\\}/gi, recipientData.lastName || '')\n    .replace(/\\{\\{company\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{companyName\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{domain\\}\\}/gi, recipientData.domain || '')\n    .replace(/\\{\\{designation\\}\\}/gi, recipientData.designation || '')\n    .trim();\n  \n  // Replace placeholders in content\n  content = content\n    .replace(/\\{\\{firstName\\}\\}/gi, recipientData.firstName || 'there')\n    .replace(/\\{\\{lastName\\}\\}/gi, recipientData.lastName || '')\n    .replace(/\\{\\{company\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{companyName\\}\\}/gi, recipientData.companyName || 'your company')\n    .replace(/\\{\\{domain\\}\\}/gi, recipientData.domain || '')\n    .replace(/\\{\\{designation\\}\\}/gi, recipientData.designation || '');\n  \n  results.push({\n    json: {\n      ...item.json,\n      subject: subject,\n      content: content,\n      recipientData: recipientData\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "7ad22ba3-042f-4274-92c5-8bc78e459ebb",
+      "name": "Replace Placeholders (Delayed)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract text from Gemini response\nconst items = $input.all();\nconst results = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const response = items[i].json;\n  const previousData = $('Replace Placeholders (Delayed)').all()[i].json;\n  \n  let personalizedText = '';\n  \n  if (response.content && response.content.parts && response.content.parts.length > 0) {\n    personalizedText = response.content.parts[0].text;\n  } else if (response.text) {\n    personalizedText = response.text;\n  } else if (typeof response === 'string') {\n    personalizedText = response;\n  } else {\n    personalizedText = previousData.content;\n  }\n  \n  personalizedText = personalizedText.trim();\n  \n  results.push({\n    json: {\n      personalizedContent: personalizedText,\n      email: previousData.email,\n      subject: previousData.subject\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "4bf8588a-85b7-47a4-9c02-c25dcc181b70",
+      "name": "Extract Content (Delayed)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.personalizedContent }}",
+        "toList": [
+          "={{ $json.email }}"
+        ],
+        "additionalFields": {}
+      },
+      "id": "9e428740-9413-4d69-94da-dc6e3a170ea9",
+      "name": "Send Delayed Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        832,
+        192
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_HERE",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deactivate-sequence",
+        "options": {}
+      },
+      "id": "c58601cd-c860-43d5-bab5-bf3d62a7000c",
+      "name": "Deactivate Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -752,
+        352
+      ],
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an email personalization assistant. Personalize the following email for the specific recipient.\n\nRECIPIENT INFORMATION:\n- Name: {{ $json.recipientData.firstName }} {{ $json.recipientData.lastName }}\n- Job Title: {{ $json.recipientData.designation }}\n- Company: {{ $json.recipientData.companyName }}\n- Industry: {{ $json.recipientData.domain }}\n\nORIGINAL EMAIL CONTENT: {{ $json.content }}\n\nINSTRUCTIONS:\n1. Personalize the email to address {{ $json.recipientData.firstName }} directly\n2. Reference their role at {{ $json.recipientData.companyName }} naturally  \n3. Keep the core message but make it warm and personalized\n4. Return ONLY the email body text - no subject line, no explanations, no JSON\n5. Use proper email formatting with line breaks\n6. Do not include any placeholders like [My Name] or [My Company]\n7. Make it ready to send as-is\n\nPERSONALIZED EMAIL:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        336,
+        0
+      ],
+      "id": "49b03982-51e2-4a18-96d3-7ec8101b2be3",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GEMINI_ID_HERE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an email personalization assistant. Personalize the following email for the specific recipient.\n\nRECIPIENT INFORMATION:\n- Name: {{ $json.recipientData.firstName }} {{ $json.recipientData.lastName }}\n- Job Title: {{ $json.recipientData.designation }}\n- Company: {{ $json.recipientData.companyName }}\n- Industry: {{ $json.recipientData.domain }}\n\nORIGINAL EMAIL CONTENT: {{ $json.content }}\n\nINSTRUCTIONS:\n1. Personalize the email to address {{ $json.recipientData.firstName }} directly\n2. Reference their role at {{ $json.recipientData.companyName }} naturally  \n3. Keep the core message but make it warm and personalized\n4. Return ONLY the email body text - no subject line, no explanations, no JSON\n5. Use proper email formatting with line breaks\n6. Do not include any placeholders like [My Name] or [My Company]\n7. Make it ready to send as-is\n\nPERSONALIZED EMAIL:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        352,
+        192
+      ],
+      "id": "ce045f66-985d-41a4-8f31-f15bca617c54",
+      "name": "Message a model (delayed)",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GEMINI_ID_HERE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Activate Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "Split Email Steps",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Email Steps": {
+      "main": [
+        [
+          {
+            "node": "Is Day 1?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Day 1?": {
+      "main": [
+        [
+          {
+            "node": "Replace Placeholders (Immediate)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Scheduled Day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Content (Immediate)": {
+      "main": [
+        [
+          {
+            "node": "Send Day 1 Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Scheduled Day": {
+      "main": [
+        [
+          {
+            "node": "Replace Placeholders (Delayed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Content (Delayed)": {
+      "main": [
+        [
+          {
+            "node": "Send Delayed Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Placeholders (Delayed)": {
+      "main": [
+        [
+          {
+            "node": "Message a model (delayed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Placeholders (Immediate)": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Extract Content (Immediate)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model (delayed)": {
+      "main": [
+        [
+          {
+            "node": "Extract Content (Delayed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1587cdc4-a421-4394-b121-e64ee43c8524",
+  "meta": {
+    "instanceId": ""
+  },
+  "id": "EkDtfSH0J6m0QgGt",
+  "tags": []
+}
